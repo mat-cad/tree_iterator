@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' - added class Criterion and derivatives that contains what's common of all
+'   criteria, before in RandomForestClassifier
+' - added CrossValidation
+
+skinparam classAttributeIconSize 0
+skinparam noteFontSize 11
+
+interface Node {
+**# num_children : int**
++ {abstract} predict(x : float[]) : int
+}
+
+class Leaf implements Node {
+- label : int
++ predict(x : float[]) : int
+}
+
+class Parent implements Node {
+- feature_index : int
+- threshold : float
++ predict (x : float[]) : int
+}
+
+Parent -down-> "1" Node : left_child
+Parent -down-> "1" Node : right_child
+
+
+class Stack {
+- stack : Node[]
++ push(node : Node)
++ pop() : Node
++ isEmpty() : boolean
+}
+
+Node -[hidden]right-> TreeIterator
+PreOrder -[hidden]right-> Stack
+PostOrder -[hidden]right-> Stack
+
+abstract class TreeIterator {
+# root : Node
++ TreeIterator(root : Node)
++ {abstract} hasNext() : boolean
++ {abstract} next() : Node
+}
+
+class PreOrder extends TreeIterator {
+- stack : Stack
+- current : Node
++ hasNext() : boolean
++ next() : Node
+}
+
+class PostOrder extends TreeIterator {
+- stackIn : Stack
+- stackOut : Stack
++ hasNext() : boolean
++ next() : Node
+}
+@enduml
